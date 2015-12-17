@@ -1,0 +1,8 @@
+<div class="view-container view-container-text" id="view-container">
+    <h1 class="view-title">Projects</h1>
+    <div ng-repeat="project in projects" ng-cloak class="project-container">
+        <div ng-bind-html="project.projectTitleHTML"></div>
+        <div ng-bind-html="project.projectImageHTML"></div>
+        <p class="projects-paragraph">{{project.projectDescription}}</p>
+    </div>
+</div>

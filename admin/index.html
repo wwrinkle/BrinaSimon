@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="icon" href="../img/Brina_Simon_Favicon.ico">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="admin.css" rel="stylesheet" type="text/css">
+    <title>Admin- Brina Simon</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script src="../js/ng-file-upload.min.js"></script>
+</head>
+
+<body ng-app="Admin">
+    <div ng-controller="BackgroundController">
+
+        <header>
+            <h1>Brina Simon Admin Portal</h1>
+            <div class="btn-group" ng-controller="SubmitController">
+                <a href="#home-slides" class="btn btn-default">Home Slides</a>
+                <a href="#audio" class="btn btn-default">Audio</a>
+                <a href="#images" class="btn btn-default">Images</a>
+                <a href="#video" class="btn btn-default">Video</a>
+                <a href="#projects" class="btn btn-default">Projects</a>
+                <a href="#performances" class="btn btn-default">Performances</a>
+                <button class="btn btn-success" ng-click="submitChanges()">Submit Changes</button>
+                <button class="btn btn-info" ng-click="passwordOpen()">Change Password</button>
+            </div>
+        </header>
+
+        <form>
+
+            <div ng-show="passwordBool" ng-controller="PasswordController">
+                <h4>Old Password</h4>
+                <h5 class="red" ng-show="oldPasswordError">Password doesn't match old password</h5>
+                <input type="password" ng-model="oldPassword" />
+                <h4>New Password</h4>
+                <h5 class="red" ng-show="matchError">Passwords don't match</h5>
+                <input type="password" ng-model="newPassword" />
+                <h4>Retype New Password</h4>
+                <h5 class="red" ng-show="matchError">Passwords don't match</h5>
+                <input type="password" ng-model="retypedNewPassword" />
+                <div class="btn-group">
+                    <button class="btn btn-success" ng-click="submitPassword()">Submit Password</button>
+                    <button class="btn btn-warning" ng-click="passwordBool = false">Cancel</button>
+                </div>
+            </div>
+
+            <div ng-controller="SlidesController">
+                <span id="home-slides" class="anchor"></span>
+                <h3>Home Slides</h3>
+                <div class="btn-group">
+                    <button class="btn btn-success" id="slide-add-button" ng-click="addingSlideBool = true">Add Slide</button>
+                </div>
+                <div ng-show="addingSlideBool" class="images-to-add">
+                    <p>Click on an image to add it.</p>
+                    <img ng-src="../{{image.imageUrl}}" ng-repeat="image in images" class="admin-image-small" ng-click="addSlideFunc($index)">
+                    <div class="btn-group">
+                        <button class="btn btn-warning" id="slide-add-button" ng-click="addingSlideBool = false">Cancel</button>
+                    </div>
+                </div>
+                <div ng-repeat="slide in slides" class="admin-container" ng-class="{'admin-container-gray': containerBackground({{$index}})}">
+                    <h1>{{$index + 1}}</h1>
+                    <img ng-src="../{{slide.image}}" class="admin-image">
+                    <div class="btn-group">
+                        <button class="btn btn-primary" ng-click="moveUpSlide($index)">Move Up</button>
+                        <button class="btn btn-primary" ng-click="moveDownSlide($index)">Move Down</button>
+                        <button class="btn btn-danger" ng-click="removeSlide($index)">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="AudioController">
+                <span id="audio" class="anchor"></span>
+                <h3>Audio</h3>
+                <div class="btn-group">
+                    <button class="btn btn-success" id="slide-add-button" ng-click="audioUploadOpen()">Add Audio</button>
+                </div>
+                <div class="image-upload" ng-show="audioUploadBool">
+                    <h4>OGG</h4>
+                    <h5 ng-show="audioUploadError.ogg" class="red">Required!</h5>
+                    <input class="btn btn-primary upload-button" type="file" name="file" ngf-select ng-model="oggToUpload" accept=".ogg" />
+                    <h4>MP3</h4>
+                    <h5 ng-show="audioUploadError.mp3" class="red">Required!</h5>
+                    <input class="btn btn-primary upload-button" type="file" name="file" ngf-select ng-model="mp3ToUpload" accept=".mp3" />
+                    <h4>AAC</h4>
+                    <h5 ng-show="audioUploadError.aac" class="red">Required!</h5>
+                    <input class="btn btn-primary upload-button" type="file" name="file" ngf-select ng-model="aacToUpload" accept=".aac" />
+                    <h4>Audio Title</h4>
+                    <h5 ng-show="audioUploadError.title" class="red">Required!</h5>
+                    <textarea class="admin-textarea" ng-model="newAudioTitle"></textarea>
+                    <div class="btn-group">
+                        <input class="btn btn-primary" type="submit" value="Upload Audio" name="submit" ng-click="audioUpload()" />
+                        <button class="btn btn-warning" id="cancel" ng-click="audioUploadClose()">Cancel</button>
+                    </div>
+                </div>
+                <div ng-repeat="audio in audio" class="admin-container" ng-class="{'admin-container-gray': containerBackground({{$index}})}">
+                    <h1>{{$index + 1}}</h1>
+                    <h4>Title</h4>
+                    <textarea class="admin-textarea" ng-disabled="!editAudioBool($index)" ng-model="audio.title"></textarea>
+                    <audio controls>
+                        <source ng-src="{{audio.mp3UrlAdmin}}" type="audio/mpeg">
+                        <source ng-src="{{audio.oggUrlAdmin}}" type="audio/ogg">
+                        <source ng-src="{{audio.aacUrlAdmin}}" type="audio/aac">
+                    </audio>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" ng-click="moveUpAudio($index)">Move Up</button>
+                        <button class="btn btn-primary" ng-click="moveDownAudio($index)">Move Down</button>
+                        <button class="btn btn-info" ng-click="editAudioTitle($index)">Edit Audio Title</button>
+                        <button class="btn btn-success" ng-show="editAudioBool($index)" ng-click="saveAudioTitle($index)">Save Audio Title</button>
+                        <button class="btn btn-warning" ng-show="editAudioBool($index)" ng-click="cancelAudioTitle($index)">Cancel</button>
+                        <button class="btn btn-danger" ng-click="removeAudio($index)">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="ImageController">
+                <span id="images" class="anchor"></span>
+                <h3>Images</h3>
+                <div class="btn-group">
+                    <button class="btn btn-success" id="slide-add-button" ng-click="imageUploadBool = true">Add Image</button>
+                </div>
+                <div class="image-upload" ng-show="imageUploadBool">
+                    <h5 ng-show="imageFileWarning" class="red">Required!</h5>
+                    <input class="btn btn-primary upload-button" type="file" name="file" ngf-select ng-model="imageToUpload" accept=".gif, .jpg, .png" />
+                    <h4>Image Description</h4>
+                    <h5 ng-show="imageDescriptionWarning" class="red">Required!</h5>
+                    <textarea class="admin-textarea" ng-model="newImageDescription"></textarea>
+                    <div class="btn-group">
+                        <input class="btn btn-primary" type="submit" value="Upload Image" name="submit" ng-click="imageUpload()" />
+                        <button class="btn btn-warning" id="cancel" ng-click="imageUploadClose()">Cancel</button>
+                    </div>
+                </div>
+
+                <div ng-repeat="image in images" class="admin-container" ng-class="{'admin-container-gray': containerBackground({{$index}})}">
+                    <h1>{{$index + 1}}</h1>
+                    <img ng-src="../{{image.imageUrl}}" class="admin-image">
+                    <h5>Image Description</h5>
+                    <textarea class="admin-textarea" ng-disabled="!editImageBool($index)" ng-model="image.imageDescription"></textarea>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" ng-click="moveUpImage($index)">Move Up</button>
+                        <button class="btn btn-primary" ng-click="moveDownImage($index)">Move Down</button>
+                        <button class="btn btn-info" ng-click="editImageDescription($index)">Edit Image Description</button>
+                        <button class="btn btn-success" ng-show="editImageBool($index)" ng-click="saveImageDescription($index)">Save Image Description</button>
+                        <button class="btn btn-warning" ng-show="editImageBool($index)" ng-click="cancelImageDescription($index)">Cancel</button>
+                        <button class="btn btn-danger" ng-click="removeImage($index)">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="VideoController">
+                <span id="video" class="anchor"></span>
+                <h3>Video</h3>
+                <div class="btn-group">
+                    <button class="btn btn-success" id="slide-add-button" ng-click="videoUploadBool = true">Add Video</button>
+                </div>
+                <div class="image-upload" ng-show="videoUploadBool">
+                    <h4>Video Title</h4>
+                    <h5 ng-show="videoTitleWarning" class="red">Required!</h5>
+                    <textarea class="admin-textarea" ng-model="newVideoTitle"></textarea>
+                    <h4>Video Description</h4>
+                    <h5 ng-show="videoDescriptionWarning" class="red">Required!</h5>
+                    <textarea class="admin-textarea" ng-model="newVideoDescription"></textarea>
+                    <h4>Video URL</h4>
+                    <h5 ng-show="videoUrlWarning" class="red">Required!</h5>
+                    <textarea class="admin-textarea" ng-model="newVideoUrl"></textarea>
+                    <div class="btn-group">
+                        <input class="btn btn-primary" type="submit" value="Upload Video" name="submit" ng-click="videoUpload()" />
+                        <button class="btn btn-warning" id="cancel" ng-click="videoUploadClose()">Cancel</button>
+                    </div>
+                </div>
+                <div ng-repeat="video in videos" class="admin-container" ng-class="{'admin-container-gray': containerBackground({{$index}})}">
+                    <h1>{{$index + 1}}</h1>
+                    <h4>Video Title</h4>
+                    <textarea class="admin-textarea" ng-disabled="!editVideoBool($index)" ng-model="video.videoTitle"></textarea>
+                    <h4>Video Description</h4>
+                    <textarea class="admin-textarea" ng-disabled="!editVideoBool($index)" ng-model="video.videoDescription"></textarea>
+                    <h4>Video URL</h4>
+                    <textarea class="admin-textarea" ng-disabled="!editVideoBool($index)" ng-model="video.videoUrl"></textarea>
+                    <iframe id="player" type="text/html" width="640" height="390" ng-src="{{video.videoEmbedUrl}}" frameborder="0"></iframe>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" ng-click="moveUpVideo($index)">Move Up</button>
+                        <button class="btn btn-primary" ng-click="moveDownVideo($index)">Move Down</button>
+                        <button class="btn btn-info" ng-click="editVideoDetails($index)">Edit Video Details</button>
+                        <button class="btn btn-success" ng-show="editVideoBool($index)" ng-click="saveVideoDetails($index)">Save Video Details</button>
+                        <button class="btn btn-warning" ng-show="editVideoBool($index)" ng-click="cancelVideoDetails($index)">Cancel</button>
+                        <button class="btn btn-danger" ng-click="removeVideo($index)">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="ProjectsController">
+                <span id="projects" class="anchor"></span>
+                <h3>Projects</h3>
+                <div class="btn-group">
+                    <button class="btn btn-success" id="slide-add-button" ng-click="projectUploadBool = true">Add Project</button>
+                </div>
+                <div class="image-upload" ng-show="projectUploadBool">
+                    <h4>Project Title</h4>
+                    <h5 ng-show="projectTitleAddWarning" class="red">Required!</h5>
+                    <textarea class="admin-textarea" ng-model="newProjectTitle"></textarea>
+                    <h4>Project Url</h4>
+                    <h5>Not Required</h5>
+                    <textarea class="admin-textarea" ng-model="newProjectUrl"></textarea>
+                    <h4>Project Description</h4>
+                    <h5 ng-show="projectDescriptionAddWarning" class="red">Required!</h5>
+                    <textarea class="admin-textarea admin-textarea-tall" ng-model="newProjectDescription"></textarea>
+                    <div class="btn-group" id="project-details-button-group">
+                        <button class="btn btn-primary" ng-click="chooseProjectAddImage()">Choose Image From Images</button>
+                        <button class="btn btn-primary" ng-click="uploadProjectAddImage()">Upload Image</button>
+                    </div>
+                    <h4>Project Image</h4>
+                    <h5 ng-show="projectImageAddError" class="red">Required!</h5>
+                    <div ng-show="choosingProjectImageAddBool" class="images-to-add">
+                        <p>Click on an image to add it.</p>
+                        <img ng-src="../{{image.imageUrl}}" ng-repeat="image in images" class="admin-image-small" ng-click="chooseProjectAddImageFunc($index)" ng-class="{'image-select': projectImageSelected($index)}">
+                    </div>
+                    <div ng-show="uploadProjectImageAddBool" class="images-to-add">
+                        <p>This image will not be added to the images found in the media section and will only appear in the projects section.
+                            <br> If you would like this image to appear both in the projects and media sections, add it to images. It will then be available to choose here.</p>
+                        <input class="btn btn-primary upload-button" type="file" name="file" ngf-select ng-model="newProjectImageToUpload" accept=".gif, .jpg, .png" />
+                    </div>
+                    <div class="btn-group" id="upload-project">
+                        <button class="btn btn-primary" ng-click="addNewProject()">Save Project</button>
+                        <button class="btn btn-warning" ng-click="uploadProjectImageAddCancel()">Cancel</button>
+                    </div>
+                </div>
+                <div ng-repeat="project in projects" class="admin-container" ng-class="{'admin-container-gray': containerBackground({{$index}})}">
+                    <h1>{{$index + 1}}</h1>
+                    <h4>Project Title</h4>
+                    <textarea class="admin-textarea" ng-model="project.projectTitle" ng-disabled="!editProjectBool($index)"></textarea>
+                    <h4>Project Url</h4>
+                    <textarea class="admin-textarea" ng-model="project.projectUrl" ng-disabled="!editProjectBool($index)"></textarea>
+                    <h4>Project Description</h4>
+                    <textarea class="admin-textarea admin-textarea-tall" ng-model="project.projectDescription" ng-disabled="!editProjectBool($index)"></textarea>
+                    <div class="btn-group" id="project-details-button-group">
+                        <button class="btn btn-info" ng-click="editProjectDetails($index)">Edit Project Details</button>
+                        <button class="btn btn-success" ng-show="editProjectBool($index)" ng-click="saveProjectDetails($index)">Save Project Details</button>
+                        <button class="btn btn-warning" ng-show="editProjectBool($index)" ng-click="cancelProjectDetails($index)">Cancel</button>
+                    </div>
+                    <h4>Project Imgage</h4>
+                    <img ng-src="../{{project.projectImg}}" class="admin-image">
+                    <div class="btn-group">
+                        <button class="btn btn-info" ng-click="projectImageOptions($index)">Edit Project Image</button>
+                        <button class="btn btn-primary" ng-show="projectImageOptionsBool($index)" ng-click="chooseProjectImage($index)">Choose Image From Images</button>
+                        <button class="btn btn-primary" ng-show="projectImageOptionsBool($index)" ng-click="uploadProjectImage($index)">Upload Image</button>
+                        <button class="btn btn-warning" ng-show="projectImageOptionsBool($index)" ng-click="projectImageOptionsClose()">Cancel</button>
+                    </div>
+                    <div ng-show="choosingProjectImageBool($index)" class="images-to-add">
+                        <p>Click on an image to add it.</p>
+                        <img ng-src="../{{image.imageUrl}}" ng-repeat="image in images" class="admin-image-small" ng-click="chooseProjectImageFunc($index)">
+                        <div class="btn-group">
+                            <button class="btn btn-warning" id="slide-add-button" ng-click="chooseProjectImageCloseFunc()">Cancel</button>
+                        </div>
+                    </div>
+                    <div ng-show="uploadProjectImageBool($index)" class="images-to-add">
+                        <p>This image will not be added to the images found in the media section and will only appear in the projects section.
+                            <br> If you would like this image to appear both in the projects and media sections, add it to images. It will then be available to choose here.</p>
+                        <h5 ng-show="existingProjectImageUploadError" class="red">Required!</h5>
+                        <input class="btn btn-primary upload-button" type="file" name="file" ngf-select ng-model="projectImageToUpload[$index].image" accept=".gif, .jpg, .png" />
+                        <div class="btn-group">
+                            <input class="btn btn-primary" type="submit" value="Upload Project Image" name="submit" ng-click="projectImageUpload($index)" />
+                            <button class="btn btn-warning" ng-click="uploadProjectImageCancel()">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="btn-group" id="projects-move">
+                        <button class="btn btn-primary" ng-click="moveUpProject($index)">Move Up</button>
+                        <button class="btn btn-primary" ng-click="moveDownProject($index)">Move Down</button>
+                        <button class="btn btn-danger" ng-click="removeProject($index)">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="PerformancesController">
+                <span id="performances" class="anchor"></span>
+                <h3>Performances</h3>
+                <div class="btn-group">
+                    <button class="btn btn-success" ng-click="addPerformanceBool = true">Add Performance</button>
+                </div>
+
+                <div ng-show="addPerformanceBool">
+                    <div class="performance-sub-container">
+                        <h4>Performance Title</h4>
+                        <h5 ng-show="performanceAddError.title" class="red">Required!</h5>
+                        <textarea class="admin-textarea" ng-model="performanceToAdd.gigTitle"></textarea>
+                    </div>
+                    <div class="performance-sub-container">
+                        <h4>Performance Time</h4>
+                        <h5>Date</h5>
+                        <h5 ng-show="performanceAddError.date" class="red">Required!</h5>
+                        <input type="date" ng-model="performanceTimeToAdd.date" class="date-input" />
+                        <h5>Time</h5>
+                        <h5 ng-show="performanceAddError.time" class="red">Required!</h5>
+                        <input type="time" ng-model="performanceTimeToAdd.time" class="date-input" />
+                    </div>
+                    <div class="performance-sub-container">
+                        <h4 id="venue-title">Venue</h4>
+                        <h5 ng-show="performanceAddError.venue" class="red">Required!</h5>
+                        <textarea class="admin-textarea" ng-model="performanceToAdd.venue"></textarea>
+                        <h4>Venue URL</h4>
+                        <h5 ng-show="performanceAddError.venueUrl" class="red">Required!</h5>
+                        <textarea class="admin-textarea" ng-model="performanceToAdd.venueUrl"></textarea>
+                    </div>
+                    <div class="performance-sub-container">
+                        <h4>Performance Address</h4>
+                        <h5>Street</h5>
+                        <h5 ng-show="performanceAddError.street" class="red">Required!</h5>
+                        <textarea class="admin-textarea" ng-model="performanceToAdd.gigAddress.street"></textarea>
+                        <h5>City</h5>
+                        <h5 ng-show="performanceAddError.city" class="red">Required!</h5>
+                        <textarea class="admin-textarea" ng-model="performanceToAdd.gigAddress.city"></textarea>
+                        <h5>State</h5>
+                        <h5 ng-show="performanceAddError.state" class="red">Required!</h5>
+                        <textarea class="admin-textarea" ng-model="performanceToAdd.gigAddress.state"></textarea>
+                        <h5>Zip Code</h5>
+                        <h5 ng-show="performanceAddError.zip" class="red">Required!</h5>
+                        <textarea class="admin-textarea" ng-model="performanceToAdd.gigAddress.zip"></textarea>
+                    </div>
+                    <div class="performance-sub-container">
+                        <h4>Performance Details</h4>
+                        <h5 ng-show="performanceAddError.details" class="red">Required!</h5>
+                        <textarea class="admin-textarea" ng-model="performanceToAdd.gigDetails"></textarea>
+                    </div>
+                    <div class="btn-group" id="upload-project">
+                        <button class="btn btn-primary" ng-click="addNewPerformance()">Save Performance</button>
+                        <button class="btn btn-warning" ng-click="addPerformanceClose()">Cancel</button>
+                    </div>
+                </div>
+                <div ng-repeat="performance in performances" class="admin-container" id="performance-container" ng-class="{'admin-container-gray': containerBackground({{$index}})}">
+                    <div class="performance-sub-container">
+                        <h4>Performance Title</h4>
+                        <textarea class="admin-textarea" ng-disabled="!editPerformanceBool($index)" ng-model="performance.gigTitle"></textarea>
+                    </div>
+                    <div class="performance-sub-container">
+                        <h4>Performance Time</h4>
+                        <h5>Date</h5>
+                        <input type="date" ng-model="performancesTime[$index].date" class="date-input" ng-disabled="!editPerformanceBool($index)" />
+                        <h5>Time</h5>
+                        <input type="time" ng-model="performancesTime[$index].time" class="date-input" ng-disabled="!editPerformanceBool($index)" />
+                    </div>
+                    <div class="performance-sub-container">
+                        <h4 id="venue-title">Venue</h4>
+                        <textarea class="admin-textarea" ng-disabled="!editPerformanceBool($index)" ng-model="performance.venue"></textarea>
+                        <h4>Venue URL</h4>
+                        <textarea class="admin-textarea" ng-disabled="!editPerformanceBool($index)" ng-model="performance.venueUrl"></textarea>
+                    </div>
+                    <div class="performance-sub-container">
+                        <h4>Performance Address</h4>
+                        <h5>Street</h5>
+                        <textarea class="admin-textarea" ng-disabled="!editPerformanceBool($index)" ng-model="performance.gigAddress.street"></textarea>
+                        <h5>City</h5>
+                        <textarea class="admin-textarea" ng-disabled="!editPerformanceBool($index)" ng-model="performance.gigAddress.city"></textarea>
+                        <h5>State</h5>
+                        <textarea class="admin-textarea" ng-disabled="!editPerformanceBool($index)" ng-model="performance.gigAddress.state"></textarea>
+                        <h5>Zip Code</h5>
+                        <textarea class="admin-textarea" ng-disabled="!editPerformanceBool($index)" ng-model="performance.gigAddress.zip"></textarea>
+                    </div>
+                    <div class="performance-sub-container">
+                        <h4>Performance Details</h4>
+                        <textarea class="admin-textarea" ng-disabled="!editPerformanceBool($index)" ng-model="performance.gigDetails"></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-info" ng-click="editPerformance($index)">Edit Performance</button>
+                        <button class="btn btn-success" ng-show="editPerformanceBool($index)" ng-click="savePerformanceEdit($index)">Save Performance</button>
+                        <button class="btn btn-warning" ng-show="editPerformanceBool($index)" ng-click="cancelEditPerformance($index)">Cancel</button>
+                        <button class="btn btn-danger" ng-click="removePerformance($index)">Remove</button>
+                    </div>
+                </div>
+            </div>
+            
+        </form>
+        
+    </div>
+    <script src="admin.js"></script>
+</body>
+
+</html>

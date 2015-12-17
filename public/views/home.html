@@ -1,0 +1,13 @@
+<!-- Carousel -->
+<div id="carousel-home" class="carousel slide" data-ride="carousel" ng-controller="HomeController as HomeCtrl" ng-init="initialWindowSize()">
+    <div class="container">
+        <h2 class="home-statement">Check out my upcoming performances <a href="/calendar">here!</a></h2>
+    </div>
+    <carousel ng-mouseenter="pause()" ng-mouseleave="play()" class="carousel fade ng-isolate-scope" ng-swipe-right="prev()" ng-swipe-left="next()" interval="carouselInterval">
+        <div class="carousel-inner" role="listbox" ng-style="resizeStyle">
+            <slide ng-repeat="slide in slides" active="slide.active">
+                <img ng-src="{{slide.image}}" class="carousel-img">
+            </slide>
+        </div>
+    </carousel>
+</div>

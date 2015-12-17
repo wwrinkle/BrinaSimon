@@ -1,0 +1,4 @@
+ln -s /var/lib/openshift/[APP ID]/app-root/repo/resources/json /var/lib/openshift/[APP ID]/app-root/repo/public/json
+ln -s /var/lib/openshift/[APP ID]/app-root/repo/resources/php /var/lib/openshift/[APP ID]/app-root/repo/public/php
+ln -s /var/lib/openshift/[APP ID]/app-root/repo/admin /var/lib/openshift/[APP ID]/app-root/repo/public/admin
+ln -s /var/lib/openshift/[APP ID]/app-root/data /var/lib/openshift/[APP ID]/app-root/repo/public/data

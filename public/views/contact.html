@@ -1,0 +1,14 @@
+<div class="view-container" id="view-container">
+    <h1 class="view-title">Contact</h1>
+    <form name="contactForm" ng-submit="contactForm.$valid && submitForm(contactFormData)">
+        <p class="email-title">Email <span ng-class="{'required-red': submitted && contactSubmitMessageFailureBool && !contactFormData.email}"><em>required</em></span></p>
+        <input type="email" name="email" class="contact-input" ng-class="{'field-red': submitted && contactSubmitMessageFailureBool && !contactFormData.email}" placeholder="Email" ng-model="contactFormData.email" required>
+        <p class="email-title">Subject</p>
+        <input type="text" name="subject" class="contact-input" placeholder="Subject" ng-model="contactFormData.subject">
+        <p class="email-title">Message <span ng-class="{'required-red': submitted && contactSubmitMessageFailureBool && !contactFormData.message}"><em>required</em></span></p>
+        <textarea name="message" class="contact-textarea" ng-class="{'field-red': submitted && contactSubmitMessageFailureBool && !contactFormData.message}" placeholder="Message" ng-model="contactFormData.message" required></textarea>
+        <p class="contact-submit-message" ng-show="contactSubmitMessageSuccessBool">Thanks for contacting me!</p>
+        <p class="contact-submit-message message-fail" ng-show="contactSubmitMessageFailureBool">There was a problem.<br>Please try again.</p>
+        <input type="submit" value="Submit" class="btn modal-button contact-button" ng-click="submitted=true">
+    </form>
+</div>

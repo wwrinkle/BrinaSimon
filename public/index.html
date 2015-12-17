@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Brina Simon, Los Angeles based jazz trumpet player.">
+    <meta name="author" content="Brina Simon">
+    <meta name="keywords" content="Brina Simon, Trumpet, Los Angeles, Jazz">
+    <link rel="icon" href="img/Brina_Simon_Favicon.ico">
+    <title>Brina Simon - Trumpet</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/stylesheet.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=La+Belle+Aurore' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script src="https://code.angularjs.org/1.3.15/angular-route.min.js"></script>
+    <script src="https://code.angularjs.org/1.3.15/angular-animate.min.js"></script>
+    <base href="/"></base>
+
+</head>
+
+<body ng-app="BrinaSimonApp">
+    <img src="img/center-piece.png" class="center-piece">
+    <!-- Nav -->
+    <nav id="nav-anchor" class="navbar navbar-default" ng-controller="NavController as NavCtrl">
+        <!-- Header -->
+        <div class="header-centered no-display-xs">
+            <div class="header-text-top-line">
+                <h1>Brina Simon</h1>
+            </div>
+            <div class="header-text-second-line">
+                <h3>trumpet</h3>
+            </div>
+        </div>
+
+        <!-- Bar -->
+        <div class="nav-super-container" id="nav-super-container" off-click="offClickCollapse()" ng-class="{ 'sticky-nav': stickyBool }">
+            <div class="navbar-container" ng-class="{ 'navbar-container-sticky': stickyBool }">
+                <div class="container container-padding-adjust" ng-class="{'container-padding-adjust-sticky': stickyBool}">
+                    <div class="navbar-header" ng-class="{ 'navbar-header-sticky': stickyBool }">
+                        <button type="button" class="navbar-toggle" aria-expanded="false" aria-controls="navbar" ng-click="collapseFunc()">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand display-xs" ng-class="{ 'sticky-navbrand-display': stickyBool }" href="/" ng-click="NavCtrl.scrollToTop()">Brina Simon<span class="navbrand-small"><small> trumpet</small></span></a>
+                    </div>
+                    <div id="navbar" class="navbar-open" ng-class="{ 'navbar-open' : !isCollapsed}">
+                        <ul class="nav navbar-nav">
+                            <li ng-class="{ active: NavCtrl.buttonClass(1) }"><a href="/" ng-click="NavCtrl.selectButton(1)">Home</a></li>
+                            <li ng-class="{ active: NavCtrl.buttonClass(2) }"><a href="/biography" ng-click="NavCtrl.selectButton(2)">Biography</a></li>
+                            <li ng-class="{ active: NavCtrl.buttonClass(3) }"><a href="/projects" ng-click="NavCtrl.selectButton(3)">Projects</a></li>
+                            <li ng-class="{ active: NavCtrl.buttonClass(4) }"><a href="/lessons" ng-click="NavCtrl.selectButton(4)">Lessons</a></li>
+                            <li ng-class="{ active: NavCtrl.buttonClass(5) }"><a href="/calendar" ng-click="NavCtrl.selectButton(5)">Calendar</a></li>
+                            <li ng-class="{ active: NavCtrl.buttonClass(6) }"><a href="/media" ng-click="NavCtrl.selectButton(6)">Media</a></li>
+                            <li ng-class="{ active: NavCtrl.buttonClass(7) }"><a href="/contact" ng-click="NavCtrl.selectButton(7)">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- view -->
+    <div ng-view id="view" ng-class="{'view-sticky': viewStickyBool}"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+    </footer>
+    <!-- Audio Player -->
+    <div class="audio-player" ng-controller="AudioController as AudioCtrl" ng-class="{'force-hover': forceHoverBool}" ng-mousemove="playerHeadMouseMove($event)" ng-mouseup="playerHeadRelease($event)" ng-mouseleave="playerHeadRelease($event)">
+        <audio id="audio" preload="metadata">
+            <source ng-src="{{tracks[audioIndex].mp3Url}}" type="audio/mpeg">
+            <source ng-src="{{tracks[audioIndex].oggUrl}}" type="audio/ogg">
+            <source ng-src="{{tracks[audioIndex].aacUrl}}" type="audio/aac">
+        </audio>
+        <a class="audio-button-link" ng-click="back()">
+            <div class="audio-button-image-container back-button-image-container">
+                <div id="back-button" class="audio-button"></div>
+            </div>
+        </a>
+        <a class="audio-button-link" ng-click="pausePlay()">
+            <div class="audio-button-image-container pause-button-image-container">
+                <div class="audio-button " ng-class="{'pause-button': pauseBool, 'play-button': playBool }">
+                    <div id="floatingBarsG">
+                        <div class="blockG" id="rotateG_01" ng-class="{'load-display': loadBool }">
+                        </div>
+                        <div class="blockG" id="rotateG_02" ng-class="{'load-display': loadBool }">
+                        </div>
+                        <div class="blockG" id="rotateG_03" ng-class="{'load-display': loadBool }">
+                        </div>
+                        <div class="blockG" id="rotateG_04" ng-class="{'load-display': loadBool }">
+                        </div>
+                        <div class="blockG" id="rotateG_05" ng-class="{'load-display': loadBool }">
+                        </div>
+                        <div class="blockG" id="rotateG_06" ng-class="{'load-display': loadBool }">
+                        </div>
+                        <div class="blockG" id="rotateG_07" ng-class="{'load-display': loadBool }">
+                        </div>
+                        <div class="blockG" id="rotateG_08" ng-class="{'load-display': loadBool }">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a class="audio-button-link" ng-click="muteSound()">
+            <div class="audio-button-image-container volume-on-button-image-container">
+                <div id="volume-on-button" class="audio-button"></div>
+                <div ng-class="{'mute-x': muteBool }"></div>
+            </div>
+        </a>
+        <a class="audio-button-link" ng-click="forward()">
+            <div class="audio-button-image-container forward-button-image-container">
+                <div id="forward-button" class="audio-button"></div>
+            </div>
+        </a>
+        <div class="track-title-container" ng-class="{'track-title-container-long': longTrackBool}">
+            <h3 class="track-title" ng-class="{'force-visible': forceHoverBool, 'track-title-long': longTrackBool}">{{audioIndex + 1}}. {{tracks[audioIndex].title}}</h3>
+        </div>
+        <div class="duration-container">
+            <h4>{{trackPosition | secondsToDateTime | date:'mm:ss'}}/{{duration | secondsToDateTime | date:'mm:ss'}}</h4>
+        </div>
+        <a class="duration-link" ng-click="positionChange($event)">
+            <div class="track-duration" id="track-duration"></div>
+        </a>
+        <a class="player-head-link">
+            <div class="player-head" ng-style="playerHeadPositionStyle" ng-mousedown="playerHeadMouseDown($event)"></div>
+        </a>
+    </div>
+    <script src="js/ui-bootstrap-tpls-0.13.0.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

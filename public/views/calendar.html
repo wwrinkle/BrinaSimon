@@ -1,0 +1,65 @@
+<div class="view-container calendar-container" id="view-container">
+    <h1 class="view-title">Calendar</h1>
+    <h3 ng-hide="upcomingPerformances.length && pastPerformances.length">No performances at this time. Please check back later.</h3>
+    <h3 ng-show="upcomingPerformances.length">Upcoming Performances</h3>
+    <div off-click="closeAll()">
+        <div class="panel-group" ng-repeat="performance in upcomingPerformances ">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="" tabindex="0" class="accordion-toggle" ng-click="openFunc($index+1)">
+                        <h4 class="heading-info heading-info-top">{{performance.gigTitle}}</h4>
+                        <h4 class="heading-info heading-info-right  heading-info-top">{{performance.gigAddress.city}}, {{performance.gigAddress.state}}</h4>
+                        <h4 class="heading-info">{{performance.gigTime | date: 'EEEE MMMM d, yyyy h:mm a'}}</h4>
+                        <span class="glyphicon glyphicon-chevron-right calendar-icon" ng-class="{'glyphicon-chevron-down': isOpenFunc($index+1), 'glyphicon-chevron-right': !isOpenFunc($index+1)}"></span>
+                    </a>
+              </div>
+              <div class="panel">
+	                <div class="panel-body" ng-class="{'open': isOpenFunc($index+1)}">
+                        <div class="accordion-details">
+                            <p class="section-title">Details:</p>
+                            <textarea disabled elastic class="view-textarea">{{performance.gigDetails}}</textarea>
+                        </div>
+                        <div class="accordion-location">
+                            <iframe frameborder="0" style="border:0"
+  ng-src="{{mapUrl($index, upcomingPerformances)}}" class="google-map" ng-class="{'google-map-display': isOpenFunc($index+1)}">
+                            </iframe>
+                            <p class="section-title">Location:</p>
+                            <a href="{{performance.venueUrl}}" target="_blank"><p id="venue-title">{{performance.venue}}</p></a>
+                            <p>{{performance.gigAddress.street}}<br>{{performance.gigAddress.city}}, {{performance.gigAddress.state}}<br>{{performance.gigAddress.zip}}</p>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    
+    <h3 ng-show="pastPerformances.length">Past Performances</h3>
+        <div class="panel-group" ng-repeat="performance in pastPerformances ">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="" tabindex="0" class="accordion-toggle" ng-click="pastOpenFunc($index+1)">
+                        <h4 class="heading-info heading-info-top">{{performance.gigTitle}}</h4>
+                        <h4 class="heading-info heading-info-right  heading-info-top">{{performance.gigAddress.city}}, {{performance.gigAddress.state}}</h4>
+                        <h4 class="heading-info">{{performance.gigTime | date: 'EEEE MMMM d, yyyy h:mm a'}}</h4>
+                        <span class="glyphicon glyphicon-chevron-right calendar-icon" ng-class="{'glyphicon-chevron-down': isOpenFunc(($index+1) * -1), 'glyphicon-chevron-right': !isOpenFunc(($index+1) * -1)}"></span>
+                    </a>
+              </div>
+              <div class="panel">
+	                <div class="panel-body" ng-class="{'open': isOpenFunc(($index+1) * -1)}">
+                        <div class="accordion-details">
+                            <p class="section-title">Details:</p>
+                            <textarea disabled elastic class="view-textarea">{{performance.gigDetails}}</textarea>
+                        </div>
+                        <div class="accordion-location">
+                            <iframe frameborder="0" style="border:0"
+  ng-src="{{mapUrl($index, pastPerformances)}}" class="google-map" ng-class="{'google-map-display': isOpenFunc(($index+1) * -1)}">
+                            </iframe>
+                                <p class="section-title">Location:</p>
+                                <a href="{{performance.venueUrl}}" target="_blank"><p id="venue-title">{{performance.venue}}</p></a>
+                                <p>{{performance.gigAddress.street}}<br>{{performance.gigAddress.city}}, {{performance.gigAddress.state}}<br>{{performance.gigAddress.zip}}</p>
+                        </div>
+                    </div>
+              </div>
+            </div>
+        </div>
+        </div>
+    </div>

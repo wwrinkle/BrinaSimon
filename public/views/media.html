@@ -1,0 +1,47 @@
+<div class="view-container" id="view-container">
+    <h1 class="view-title">Media</h1>
+    <h2 class="media-title">Audio</h2>
+    <div off-click="closeAudioPlayer()">
+        <div class="media-audio-container" ng-repeat="track in tracks" ng-click="openAudioPlayer($index)">
+            <p class="media-track-name">{{$index + 1}}. {{track.title}}</p> <div class="play-button media-play"></div>
+        </div>
+    </div>
+    <h2 class="media-title">Video</h2>
+    <div class="video-container">
+        <div ng-repeat="video in videos" class="video-thumb-container">
+            <script type="text/ng-template" id="vidModal.html">
+                <div class="modal-body">
+                    <iframe id="ytplayer" type="text/html"
+  ng-src="{{embedGenerator(modalVidIndex)}}"
+  frameborder="0"/>
+                    <iframe ng-src= class="embed-responsive-item"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <textarea disabled elastic class="view-textarea media-textarea">{{modalVideos[modalVidIndex].videoDescription}}</textarea>
+                    <button class="btn modal-button" ng-click="close()">Close</button>
+                </div>
+            </script>
+        
+            <img  class="video-thumbnails" ng-src="{{thumbnailGenerator($index)}}" ng-click="openVideos($index)" ng-attr-id="{{ 'video-thumbnail-' + $index }}">
+        </div>
+    </div>
+    <h2 class="media-title">Images</h2>
+    <div ng-repeat="image in images" class="image-thumb-container">
+        <script type="text/ng-template" id="imgModal.html">
+            <div class="modal-body">
+                <div class="modal-img-control modal-control-left" ng-click="imgControlLeft()">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </div>
+                <div class="modal-img-control modal-control-right" ng-click="imgControlRight()">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </div>
+                <img id="modal-img" ng-src="{{modalImages[modalImgIndex].imageUrl}}">
+            </div>
+            <div class="modal-footer">
+                <textarea disabled elastic class="view-textarea media-textarea">{{modalImages[modalImgIndex].imageDescription}}</textarea>
+                <button class="btn modal-button" ng-click="close()">Close</button>
+            </div>
+        </script>
+        <img class="image-thumbnails" ng-src="{{image.imageUrl}}" ng-click="open($index)">
+    </div>
+</div>
