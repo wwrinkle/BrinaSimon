@@ -1680,11 +1680,11 @@
     .project-link:hover,
     .project-link:active,
     .project-link:focus {
-        text-decoration: none;
+        text-decoration: underline;
+        color: #36198C;
     }
     
     .project-has-link {
         color: #36198C !important;
         cursor: pointer !important;
-        text-decoration: underline;
     }
