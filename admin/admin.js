@@ -47,7 +47,7 @@ app.controller('SubmitController', function($scope, $rootScope, $http) {
             for (r = 0; r < 6; r++) {
                 $http({
                     method: "post",
-                    url: '../php/json-post.php',
+                    url: '/php/json-post.php',
                     data: $scope.jsonToUpload[r],
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -131,7 +131,7 @@ app.controller('SlidesController', function($scope, $rootScope, $http) {
     };
 });
 
-app.controller('AudioController', function($scope, $rootScope, $http, Upload) {
+app.controller('AudioController', function($scope, $rootScope, $timeout, $http, Upload) {
     $http.get('../data/audio.json').success(function(response) {
         $rootScope.audio = response;
         for (var i = 0; i < $rootScope.audio.length; i++) {
@@ -201,15 +201,15 @@ app.controller('AudioController', function($scope, $rootScope, $http, Upload) {
             aac: false,
             title: false
         };
-        if ($scope.oggToUpload.length && $scope.mp3ToUpload.length && $scope.aacToUpload.length && $scope.newAudioTitle.length) {
+        if ($scope.oggToUpload.size && $scope.mp3ToUpload.size && $scope.aacToUpload.size && $scope.newAudioTitle.length) {
             console.log('all audio ready for upload');
             $scope.newAudioObject = {
-                oggUrl: 'audio/' + $scope.oggToUpload[0].name,
-                oggUrlAdmin: '../audio/' + $scope.oggToUpload[0].name,
-                mp3Url: 'audio/' + $scope.mp3ToUpload[0].name,
-                mp3UrlAdmin: '../audio/' + $scope.mp3ToUpload[0].name,
-                aacUrl: 'audio/' + $scope.aacToUpload[0].name,
-                aacUrlAdmin: '../audio/' + $scope.aacToUpload[0].name,
+                oggUrl: 'audio/' + $scope.oggToUpload.name.replace(/\s+/g, ''),
+                oggUrlAdmin: '../audio/' + $scope.oggToUpload.name.replace(/\s+/g, ''),
+                mp3Url: 'audio/' + $scope.mp3ToUpload.name.replace(/\s+/g, ''),
+                mp3UrlAdmin: '../audio/' + $scope.mp3ToUpload.name.replace(/\s+/g, ''),
+                aacUrl: 'audio/' + $scope.aacToUpload.name.replace(/\s+/g, ''),
+                aacUrlAdmin: '../audio/' + $scope.aacToUpload.name.replace(/\s+/g, ''),
                 title: $scope.newAudioTitle
             };
             $rootScope.audio.splice(0, 0, $scope.newAudioObject);
@@ -218,14 +218,31 @@ app.controller('AudioController', function($scope, $rootScope, $http, Upload) {
                 $scope.mp3ToUpload,
                 $scope.aacToUpload
             ];
-            for (n = 0; n < 3; n++) {
+            $scope.progress = 0;
+            for (var n = 0; n < 3; n++) {
                 var file = $scope.uploadArray[n];
                 Upload.upload({
-                    url: '../php/audio-upload.php',
+                    url: '/php/audio-upload.php',
                     method: 'POST',
                     file: file
-                }).success(function(data, status, headers, config) {
-                    console.log('file ' + config.file.name + ' uploaded. Response: ' + data);
+                }).then(function(res) {
+                    $timeout(function() {
+                        console.log(res);
+                        $scope.progress += 100 / 3;
+                        if ($scope.progress == 100) {
+                            $scope.progress = undefined;
+                        }
+                    });
+                }, function(res) {
+                    if (res.status > 0)
+                        console.log(res);
+                }, function(evt) {
+                    var particalProgress = Math.min(100, parseInt(100.0 *
+                        evt.loaded / evt.total));
+                    if (particalProgress > $scope.progress && particalProgress < 100) {
+                        $scope.progress = particalProgress;
+                    }
+                    console.log($scope.progress);
                 });
             }
             $scope.audioUploadClose();
@@ -265,14 +282,14 @@ app.controller('ImageController', function($scope, $rootScope, $http, Upload) {
         $scope.imageFileWarning = false;
         if ($scope.newImageDescription.length && $scope.imageToUpload.length) {
             $scope.newImageObject = {
-                imageUrl: "img/" + file[0].name,
+                imageUrl: "img/" + file[0].name.replace(/\s+/g, ''),
                 imageDescription: $scope.newImageDescription
             };
             console.log($scope.newImageObject);
             $rootScope.images.splice(0, 0, $scope.newImageObject);
             $scope.imageUploadBool = false;
             Upload.upload({
-                url: '../php/image-upload.php',
+                url: '/php/image-upload.php',
                 method: 'POST',
                 file: file
             }).success(function(data, status, headers, config) {
@@ -502,13 +519,13 @@ app.controller('ProjectsController', function($scope, $rootScope, $http, Upload)
             file = '';
         }
         if (file.length) {
-            $rootScope.projects[$scope.projectIndex].projectImg = "img/" + file[0].name;
+            $rootScope.projects[$scope.projectIndex].projectImg = "img/" + file[0].name.replace(/\s+/g, '');
             Upload.upload({
-                url: '../php/image-upload.php',
+                url: '/php/image-upload.php',
                 method: 'POST',
                 file: file
             }).success(function(data, status, headers, config) {
-                console.log('file ' + config.file.name + ' uploaded. Response: ' + data);
+                console.log(config);
                 $scope.projectImageOptionsClose();
                 $scope.existingProjectImageUploadError = false;
             });
@@ -582,7 +599,7 @@ app.controller('ProjectsController', function($scope, $rootScope, $http, Upload)
                 $scope.newProjectObject = {
                     projectTitle: $scope.newProjectTitle,
                     projectUrl: $scope.newProjectUrl,
-                    projectImg: "img/" + file[0].name,
+                    projectImg: "img/" + file[0].name.replace(/\s+/g, ''),
                     projectDescription: $scope.newProjectDescription
                 };
                 console.log($scope.newProjectObject);
@@ -593,7 +610,7 @@ app.controller('ProjectsController', function($scope, $rootScope, $http, Upload)
                 $scope.chosenProjectImage = '';
                 $scope.newProjectObject = {};
                 Upload.upload({
-                    url: '../php/image-upload.php',
+                    url: '/php/image-upload.php',
                     method: 'POST',
                     file: file
                 }).success(function(data, status, headers, config) {
@@ -621,9 +638,9 @@ app.controller('ProjectsController', function($scope, $rootScope, $http, Upload)
 app.controller('PerformancesController', function($scope, $rootScope, $http, $filter) {
     $http.get('../data/performances.json').success(function(response) {
         var orderBy = $filter('orderBy');
-        $rootScope.performances= response;
+        $rootScope.performances = response;
         $scope.order = function(predicate, reverse) {
-            $rootScope.performances= orderBy($rootScope.performances, predicate, reverse);
+            $rootScope.performances = orderBy($rootScope.performances, predicate, reverse);
         };
         $scope.order('-gigTime', false);
         $scope.performancesTime = [];

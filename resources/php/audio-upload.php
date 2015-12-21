@@ -5,10 +5,13 @@ if (isset ($name)) {
     if (!empty($name)) {
     $location = '[PATH TO AUDIO]';
     if  (move_uploaded_file($tmp_name, $location.$name)){
-        echo 'Uploaded';    
+        if (strpos($name, ' ')) {
+                $newName = str_replace(' ', '', $name);
+                rename($location.$name, $location.$newName);
+            } 
         }
         } else {
-          echo 'please choose a file';
+          echo 'No name';
           }
     }
 ?>

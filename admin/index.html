@@ -75,6 +75,7 @@
                 <div class="btn-group">
                     <button class="btn btn-success" id="slide-add-button" ng-click="audioUploadOpen()">Add Audio</button>
                 </div>
+                <h3 class="red" ng-show="progress >= 0 && progress < 100">Progress: {{progress}}% -- Don't Close</h3>
                 <div class="image-upload" ng-show="audioUploadBool">
                     <h4>OGG</h4>
                     <h5 ng-show="audioUploadError.ogg" class="red">Required!</h5>
@@ -366,9 +367,9 @@
                     </div>
                 </div>
             </div>
-            
+
         </form>
-        
+
     </div>
     <script src="admin.js"></script>
 </body>
