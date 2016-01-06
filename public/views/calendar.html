@@ -1,6 +1,6 @@
 <div class="view-container calendar-container" id="view-container">
     <h1 class="view-title">Calendar</h1>
-    <h3 ng-hide="upcomingPerformances.length && pastPerformances.length">No performances at this time. Please check back later.</h3>
+    <h3 ng-hide="upcomingPerformances.length && pastPerformances.length">Please check back later.</h3>
     <h3 ng-show="upcomingPerformances.length">Upcoming Performances</h3>
     <div off-click="closeAll()">
         <div class="panel-group" ng-repeat="performance in upcomingPerformances ">

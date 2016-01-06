@@ -280,9 +280,9 @@ app.controller('ImageController', function($scope, $rootScope, $http, Upload) {
         var file = $scope.imageToUpload;
         $scope.imageDescriptionWarning = false;
         $scope.imageFileWarning = false;
-        if ($scope.newImageDescription.length && $scope.imageToUpload.length) {
+        if ($scope.newImageDescription.length && $scope.imageToUpload.size) {
             $scope.newImageObject = {
-                imageUrl: "img/" + file[0].name.replace(/\s+/g, ''),
+                imageUrl: "img/" + file.name.replace(/\s+/g, ''),
                 imageDescription: $scope.newImageDescription
             };
             console.log($scope.newImageObject);
@@ -300,7 +300,7 @@ app.controller('ImageController', function($scope, $rootScope, $http, Upload) {
             if (!$scope.newImageDescription.length) {
                 $scope.imageDescriptionWarning = true;
             }
-            if (!$scope.imageToUpload.length) {
+            if (!$scope.imageToUpload.size) {
                 $scope.imageFileWarning = true;
             }
         }
@@ -518,8 +518,8 @@ app.controller('ProjectsController', function($scope, $rootScope, $http, Upload)
         if (file == undefined) {
             file = '';
         }
-        if (file.length) {
-            $rootScope.projects[$scope.projectIndex].projectImg = "img/" + file[0].name.replace(/\s+/g, '');
+        if (file.size) {
+            $rootScope.projects[$scope.projectIndex].projectImg = "img/" + file.name.replace(/\s+/g, '');
             Upload.upload({
                 url: '/php/image-upload.php',
                 method: 'POST',
